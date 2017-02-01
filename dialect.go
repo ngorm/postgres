@@ -10,19 +10,19 @@ import (
 	"github.com/ngorm/ngorm/model"
 )
 
-type postgres struct {
+type Postgres struct {
 	common.Dialect
 }
 
-func (postgres) GetName() string {
+func (Postgres) GetName() string {
 	return "postgres"
 }
 
-func (postgres) BindVar(i int) string {
+func (Postgres) BindVar(i int) string {
 	return fmt.Sprintf("$%v", i)
 }
 
-func (postgres) DataTypeOf(field *model.StructField) (string, error) {
+func (Postgres) DataTypeOf(field *model.StructField) (string, error) {
 	dataValue, sqlType, size, additionalType :=
 		model.ParseFieldStructForDialect(field)
 	if sqlType == "" {
@@ -87,7 +87,7 @@ func (postgres) DataTypeOf(field *model.StructField) (string, error) {
 	return fmt.Sprintf("%v %v", sqlType, additionalType), nil
 }
 
-func (s postgres) HasIndex(tableName string, indexName string) bool {
+func (s Postgres) HasIndex(tableName string, indexName string) bool {
 	var count int
 	s.DB.QueryRow(
 		"SELECT count(*) FROM pg_indexes WHERE tablename = $1 AND indexname = $2",
@@ -95,7 +95,7 @@ func (s postgres) HasIndex(tableName string, indexName string) bool {
 	return count > 0
 }
 
-func (s postgres) HasForeignKey(tableName string, foreignKeyName string) bool {
+func (s Postgres) HasForeignKey(tableName string, foreignKeyName string) bool {
 	var count int
 	query := `
 SELECT Count(con.conname)
@@ -108,7 +108,7 @@ WHERE  $1 :: regclass :: oid = con.conrelid
 	return count > 0
 }
 
-func (s postgres) HasTable(tableName string) bool {
+func (s Postgres) HasTable(tableName string) bool {
 	var count int
 	query := `
 SELECT Count(*)
@@ -120,7 +120,7 @@ WHERE  table_name = $1
 	return count > 0
 }
 
-func (s postgres) HasColumn(tableName string, columnName string) bool {
+func (s Postgres) HasColumn(tableName string, columnName string) bool {
 	var count int
 	query := `
 SELECT Count(*)
@@ -132,16 +132,16 @@ WHERE  table_name = $1
 	return count > 0
 }
 
-func (s postgres) CurrentDatabase() (name string) {
+func (s Postgres) CurrentDatabase() (name string) {
 	s.DB.QueryRow("SELECT CURRENT_DATABASE()").Scan(&name)
 	return
 }
 
-func (s postgres) LastInsertIDReturningSuffix(tableName, key string) string {
+func (s Postgres) LastInsertIDReturningSuffix(tableName, key string) string {
 	return fmt.Sprintf("RETURNING %v.%v", tableName, key)
 }
 
-func (postgres) SupportLastInsertID() bool {
+func (Postgres) SupportLastInsertID() bool {
 	return false
 }
 
