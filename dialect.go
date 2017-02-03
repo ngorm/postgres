@@ -7,8 +7,13 @@ import (
 	"time"
 
 	"github.com/ngorm/common"
+	"github.com/ngorm/ngorm/dialects"
 	"github.com/ngorm/ngorm/model"
 )
+
+func init() {
+	dialects.Register(&Postgres{})
+}
 
 type Postgres struct {
 	common.Dialect
