@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/lib/pq"
 	"github.com/ngorm/common"
 	"github.com/ngorm/ngorm/dialects"
 	"github.com/ngorm/ngorm/model"
